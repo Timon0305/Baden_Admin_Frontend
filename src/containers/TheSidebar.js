@@ -28,7 +28,7 @@ const TheSidebar = () => {
     >
       <CSidebarBrand className="d-md-down-none" to="/">
         <img src={Logo} alt={'logo'} height={'60px'} style={{padding: 10}}/>
-        <div>&nbsp;Docitoo Admin</div>
+        <div>&nbsp;BADEN Admin</div>
       </CSidebarBrand>
       <CSidebarNav>
 

@@ -21,8 +21,8 @@ export default [
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Doctors',
-    to: '/doctors',
+    name: 'Drivers',
+    to: '/drivers',
     icon: 'cil-people',
   },
   {
@@ -31,8 +31,8 @@ export default [
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Notifications',
-    to: '/notifications',
+    name: 'Add Vehicle',
+    to: '/vehicles',
     icon: 'cil-comment-square',
   },
   // {

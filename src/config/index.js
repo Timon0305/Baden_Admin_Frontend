@@ -1,5 +1,4 @@
-// const baseUrl = 'http://localhost:3000';
-const baseUrl = 'https://docitoo.herokuapp.com';
+const baseUrl = 'http://localhost:3010';
 const apiUrl = baseUrl + '/api/admin';
 
 export default {

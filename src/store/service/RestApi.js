@@ -54,6 +54,22 @@ const deleteDoctor = (api, id) => {
   return api.delete(`/doctors/${id}`);
 };
 
+const getVehicle = (api) => {
+  return api.get('/vehicles');
+}
+
+const createVehicle = (api, newVehicle) => {
+  return api.put('/vehicles', {newVehicle})
+}
+
+const updateVehicle = (api, id, newVehicle) => {
+  return api.post(`/vehicles/${id}`, {newVehicle})
+}
+
+const deleteVehicle = (api, id) => {
+  return api.delete(`vehicles/${id}`)
+}
+
 export default {
   instance,
   login,
@@ -65,4 +81,8 @@ export default {
   getDoctors,
   updateDoctor,
   deleteDoctor,
+  getVehicle,
+  createVehicle,
+  updateVehicle,
+  deleteVehicle,
 }

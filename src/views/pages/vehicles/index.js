@@ -45,7 +45,7 @@ import {showNotification} from "../../../store/redux/notificationRedux";
 import {Type} from "../../../constants/Notifications";
 // import Avatar from 'react-avatar-edit';
 
-const fields = ['avatar', 'name', 'email', 'phone', 'status', 'actions'];
+const fields = ['avatar', 'name', 'actions'];
 
 const getBadge = status => {
   switch (status.toString().toLowerCase()) {
@@ -64,13 +64,8 @@ const getBadge = status => {
 
 
 const validator = object().shape({
-  email: string()
-    .required({message: 'Please enter email'})
-    .email({message: 'Please enter a valid email'}),
   fullName: string()
     .required({message: 'Please enter name'}),
-  // password: string()
-  //   .required({message: 'Please enter password'}),
 });
 
 const idValidator = object().shape({
@@ -88,24 +83,24 @@ const Loading = () => {
   )
 };
 
-const Users = (props) => {
-  const tag = 'Page::Users';
-  const [users, setUsers] = useState([]);
+const Vehicles = (props) => {
+  const tag = 'Page::Vehicle';
+  const [vehicles, setVehicles] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [visibleView, setVisibleView] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [createMode, setCreateMode] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchVehicle = async () => {
     try {
-      let {ok, data} = await props.callApi(RestApi.getUsers);
+      let {ok, data} = await props.callApi(RestApi.getVehicle);
       if (ok) {
-        console.log(tag, 'fetch', data.users);
-        for (let item of data.users) {
-          item.avatarUrl = Config.BASE_URL + item.avatarUrl;
+        console.log(tag, 'fetch', data.vehicles);
+        for (let item of data.vehicles) {
+          item.carUrl = Config.BASE_URL + item.carUrl;
         }
-        setUsers(data.users);
-        setSelectedUser(data.users[0]);
+        setVehicles(data.vehicles);
+        setSelectedUser(data.vehicles[0]);
       }
     } catch (e) {
       console.log(tag, 'FETCH_USER_ERROR', e.message)
@@ -137,11 +132,11 @@ const Users = (props) => {
       console.log(tag, 'ClickDelete');
 
       await idValidator.validate({id});
-      response = await props.callApi(RestApi.deleteUser, id);
+      response = await props.callApi(RestApi.deleteVehicle, id);
 
       let {ok, data} = response;
       if (ok) {
-        await fetchUsers();
+        await fetchVehicle();
       }
     } catch (e) {
       let message = `${e.name}: `;
@@ -165,17 +160,18 @@ const Users = (props) => {
   const handleUpdate = async (id) => {
     try {
       let response;
-      await validator.validate({email: selectedUser.email, fullName: selectedUser.fullName});
+      console.log('-<<<<<<<<', id)
+      await validator.validate({fullName: selectedUser.fullName});
       if (createMode) {
-        response = await props.callApi(RestApi.createUser, selectedUser);
+        response = await props.callApi(RestApi.createVehicle, selectedUser);
       } else {
         await idValidator.validate({id});
-        response = await props.callApi(RestApi.updateUser, id, selectedUser);
+        response = await props.callApi(RestApi.updateVehicle, id, selectedUser);
       }
 
       let {ok, data} = response;
       if (ok) {
-        await fetchUsers();
+        await fetchVehicle();
       }
       toggleEdit(false);
     } catch (e) {
@@ -192,12 +188,12 @@ const Users = (props) => {
 
   const handleAdd = () => {
     setCreateMode(true);
-    setSelectedUser(Constants.EMPTY_USER);
+    setSelectedUser(Constants.EMPTY_VEHICLE);
     toggleEdit(true);
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchVehicle();
   }, []);
 
   return (
@@ -207,11 +203,11 @@ const Users = (props) => {
           {props.isLoading === false ?
             <CCard>
               <CCardHeader>
-                Users
+                Vehicle Lists
               </CCardHeader>
               <CCardBody>
                 <CDataTable
-                  items={users}
+                  items={vehicles}
                   fields={fields}
                   itemsPerPage={10}
                   pagination
@@ -220,7 +216,7 @@ const Users = (props) => {
                       (item) => (
                         <td className="text-left">
                           <div className="c-avatar">
-                            <img src={item.avatarUrl} className="c-avatar-img" alt="avatar"/>
+                            <img src={item.carUrl} className="c-avatar-img" alt="avatar"/>
                           </div>
                         </td>
                       ),
@@ -232,22 +228,6 @@ const Users = (props) => {
                           </div>
                         </td>
                       ),
-                    'phone':
-                      (item) => (
-                        <td>
-                          <CBadge color={"light"}>
-                            {item.phoneNumber}
-                          </CBadge>
-                        </td>
-                      ),
-                    'status':
-                      (item) => (
-                        <td>
-                          <CBadge color={getBadge(item.status)}>
-                            {item.status}
-                          </CBadge>
-                        </td>
-                      ),
                     'actions':
                       (item) => (
                         <td>
@@ -257,7 +237,7 @@ const Users = (props) => {
                                    className={"btn-pill"} onClick={() => onClickEdit(item)}>Edit</CButton>&nbsp;
                           <CButton active variant="ghost" color="danger" aria-pressed="true" size="sm"
                                    className={"btn-pill"}
-                                   onClick={() => onClickDelete(item.id.toString())}>Delete</CButton>
+                                   onClick={() => onClickDelete(item._id.toString())}>Delete</CButton>
                         </td>
                       )
 
@@ -265,7 +245,7 @@ const Users = (props) => {
                 />
               </CCardBody>
               <CCardFooter>
-                <CButton color="secondary" onClick={handleAdd}>Add User</CButton>
+                <CButton color="secondary" onClick={handleAdd}>Add Vehicle</CButton>
               </CCardFooter>
             </CCard>
             :
@@ -293,7 +273,7 @@ const Users = (props) => {
                         <CCol xs="12" md="12">
                           <div style={{width: 100, height: 100, margin: 'auto'}}>
                             <CImg
-                              src={selectedUser.avatarUrl}
+                              src={selectedUser.carUrl}
                               className="c-avatar-img"
                               alt={selectedUser.email}
                             />
@@ -302,50 +282,12 @@ const Users = (props) => {
                       </CFormGroup>
                       <CFormGroup row>
                         <CCol md="6" className="text-right">
-                          <CLabel htmlFor="text-input">Name</CLabel>
+                          <CLabel htmlFor="text-input">Vehicle Name</CLabel>
                         </CCol>
                         <CCol xs="12" md="6">
                           <p className="form-control-static">{selectedUser.fullName.toString().toUpperCase()}</p>
                         </CCol>
                       </CFormGroup>
-                      <CFormGroup row>
-                        <CCol md="6" className="text-right">
-                          <CLabel htmlFor="password-input">Email</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="6">
-                          <p className="form-control-static">{selectedUser.email}</p>
-                        </CCol>
-                      </CFormGroup>
-                      <CFormGroup row>
-                        <CCol md="6" className="text-right">
-                          <CLabel htmlFor="password-input">PhoneNumber</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="6">
-                          <p
-                            className="form-control-static">{selectedUser.phoneNumber.length > 0 ? selectedUser.phoneNumber : '-'}</p>
-                        </CCol>
-                      </CFormGroup>
-                      <CFormGroup row>
-                        <CCol md="6" className="text-right">
-                          <CLabel htmlFor="password-input">Joined since</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="6">
-                          <p className="form-control-static">{datetime.create(selectedUser.createdAt).format('f Y')}</p>
-                        </CCol>
-                      </CFormGroup>
-                      <CFormGroup row>
-                        <CCol md="6" className="text-right">
-                          <CLabel htmlFor="password-input">Status</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="6">
-                          <h4>
-                            <CBadge color={getBadge(selectedUser.status)}>
-                              {selectedUser.status}
-                            </CBadge>
-                          </h4>
-                        </CCol>
-                      </CFormGroup>
-
                     </CForm>
                   </CCardBody>
                 </CCard>
@@ -364,7 +306,7 @@ const Users = (props) => {
         >
           <CModalHeader closeButton>
             <CModalTitle>
-              {createMode ? "Add User" : "Edit User"}
+              {createMode ? "Add Vehicle" : "Edit Vehicle"}
             </CModalTitle>
           </CModalHeader>
           <CModalBody>
@@ -381,13 +323,13 @@ const Users = (props) => {
                                 style={{opacity: 0.1}}
                                 getImg={(img) => {
                                   let temp = Object.assign({}, selectedUser);
-                                  temp.avatarUrl = img;
+                                  temp.carUrl = img;
                                   setSelectedUser(temp);
                                   // console.log(tag, 'image', img);
                                 }}/>
                             </div>
                             <CImg
-                              src={selectedUser.avatarUrl}
+                              src={selectedUser.carUrl}
                               className="c-avatar-img"
                               alt={selectedUser.fullName}
                             />
@@ -396,62 +338,16 @@ const Users = (props) => {
                       </CFormGroup>
                       <CFormGroup row>
                         <CCol md="3">
-                          <CLabel htmlFor="name-input">Full Name</CLabel>
+                          <CLabel htmlFor="name-input">Vehicle Name</CLabel>
                         </CCol>
                         <CCol xs="12" md="9">
-                          <CInput id="name-input" name="name-input" placeholder="Type a full name"
+                          <CInput id="name-input" name="name-input" placeholder="Type a vehicle name"
                                   value={selectedUser.fullName}
                                   onChange={(e) => handleEdit('fullName', e.target.value)}
                           />
                           {/*<CFormText>This is a help text</CFormText>*/}
                         </CCol>
                       </CFormGroup>
-                      <CFormGroup row>
-                        <CCol md="3">
-                          <CLabel htmlFor="email-input">Email Address</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="9">
-                          <CInput type="email" id="email-input" name="email-input" placeholder="Type an email"
-                                  autoComplete="email"
-                                  value={selectedUser.email}
-                                  onChange={(e) => handleEdit('email', e.target.value)}
-                          />
-                        </CCol>
-                      </CFormGroup>
-                      <CFormGroup row>
-                        <CCol md="3">
-                          <CLabel htmlFor="phone-input">Phone Number</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="9">
-                          <CInput type="text" id="phone-input" name="phone-input" placeholder="Type a phone number"
-                                  autoComplete="phone"
-                                  value={selectedUser.phoneNumber}
-                                  onChange={(e) => handleEdit('phoneNumber', e.target.value)}
-                          />
-                        </CCol>
-                      </CFormGroup>
-
-                      <CFormGroup row>
-                        <CCol md="3">
-                          <CLabel htmlFor="status">Status</CLabel>
-                        </CCol>
-                        <CCol xs="12" md="9">
-                          <CSelect custom name="status" id="status"
-                                   value={selectedUser.status}
-                                   onChange={e => handleEdit('status', e.target.value)}
-                          >
-                            <option value="-1">Please select a status</option>
-                            {
-                              Constants.STATUS.map((item, index) => {
-                                return (
-                                  <option value={item} key={index}>{item.toString().toUpperCase()}</option>
-                                )
-                              })
-                            }
-                          </CSelect>
-                        </CCol>
-                      </CFormGroup>
-
                     </CForm>
                   </CCardBody>
                 </CCard>
@@ -460,7 +356,7 @@ const Users = (props) => {
           </CModalBody>
           <CModalFooter>
             <CButton color="secondary" onClick={() => toggleEdit(false)}>Cancel</CButton>{' '}
-            <CButton color={createMode ? "primary" : "success"} onClick={() => handleUpdate(selectedUser.id)}>
+            <CButton color={createMode ? "primary" : "success"} onClick={() => handleUpdate(selectedUser._id)}>
               {createMode ? "Add" : "Update"}
             </CButton>
           </CModalFooter>
@@ -482,4 +378,4 @@ export default connect(
     callApi2: (method, callback, ...args) => dispatch(ApiRedux.callApi(method, callback, ...args)),
     toast: (type, message) => dispatch(showNotification(type, message))
   })
-)(Users)
+)(Vehicles)

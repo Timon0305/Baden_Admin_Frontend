@@ -30,19 +30,16 @@ export const BLOOD_TYPE = [
 
 export const EMPTY_USER = {
   avatarUrl: Config.BASE_URL + "/images/avatar/default.png",
-  bloodType: "",
   email: "",
   fullName: "",
-  gender: "",
-  language: "",
   phoneNumber: "",
   status: "ACTIVE",
-  password: "123456",
-  speciality: '',
-  street: '',
-  city: '',
-  country: ''
 };
+
+export const EMPTY_VEHICLE = {
+  carUrl : Config.BASE_URL + "/images/cars/default_cars.png",
+  fullName: ''
+}
 
 export const DOCTOR_SPECIALITY = {
   'gynecologist': 'Gynecologist',

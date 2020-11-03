@@ -33,8 +33,8 @@ const validator = object().shape({
 const tag = 'Login';
 const Login = (props) => {
   // const dispatch = useDispatch();
-  const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('1234');
+  const [email, setEmail] = useState('admin@admin.com');
+  const [password, setPassword] = useState('admin123');
 
 
   const onChangeEmail = (event) => {
@@ -84,7 +84,7 @@ const Login = (props) => {
                 <CCard className="p-4">
                   <CCardBody>
                     <CForm>
-                      <h1>Docitoo Admin</h1>
+                      <h1>BADEN Admin</h1>
                       <p className="text-muted">Sign in as Admin</p>
                       <CInputGroup className="mb-3">
                         <CInputGroupPrepend>
